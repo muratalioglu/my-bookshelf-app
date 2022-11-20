@@ -1,0 +1,32 @@
+[
+  {
+    "id": null,
+    "title": "Bir Bilim Adamının Romanı",
+    "description": null,
+    "author": "Oğuz Atay",
+    "publicationDate": null,
+    "isbn": "9789754700671",
+    "language": "tr",
+    "pages": 283
+  },
+  {
+    "id": null,
+    "title": "Kırmızı Pazartesi",
+    "description": null,
+    "author": "Gabriel Garcia Marquez",
+    "publicationDate": null,
+    "isbn": "9789750721571",
+    "language": "tr",
+    "pages": 120
+  },
+  {
+    "id": null,
+    "title": "Yaşar Ne Yaşar Ne Yaşamaz",
+    "description": null,
+    "author": "Aziz Nesin",
+    "publicationDate": null,
+    "isbn": 9789759038472,
+    "language": "tr",
+    "pages": 343
+  }
+]
