@@ -1,12 +1,14 @@
 package com.example.mybookshelfapi.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@Data
-@AllArgsConstructor
-public class BookDTO {
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
 
+@Data
+public class BookInDTO {
+
+    @NotBlank(message = "Title is required")
     String title;
 
     String description;
@@ -14,10 +16,12 @@ public class BookDTO {
     String author;
 
     String isbn;
-
+    
     String language;
 
+    @Positive
     Integer publicationYear;
 
+    @Positive
     Integer pages;
 }
