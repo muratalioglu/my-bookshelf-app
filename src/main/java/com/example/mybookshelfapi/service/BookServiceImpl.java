@@ -25,14 +25,15 @@ public class BookServiceImpl implements BookService {
     public List<BookDTO> getAllBooks() {
         return bookRepository.findAll().stream()
                 .map(
-                        b -> new BookDTO(
-                                b.getTitle(),
-                                b.getDescription(),
-                                b.getAuthor(),
-                                b.getIsbn(),
-                                b.getLanguage(),
-                                b.getPublicationYear(),
-                                b.getPages()
+                        book -> new BookDTO(
+                                book.getId(),
+                                book.getTitle(),
+                                book.getDescription(),
+                                book.getAuthor(),
+                                book.getIsbn(),
+                                book.getLanguage(),
+                                book.getPublicationYear(),
+                                book.getPages()
                         )
                 )
                 .collect(Collectors.toList());
@@ -44,6 +45,7 @@ public class BookServiceImpl implements BookService {
         Book book = getBookById(id);
 
         return new BookDTO(
+                book.getId(),
                 book.getTitle(),
                 book.getDescription(),
                 book.getAuthor(),
@@ -51,7 +53,7 @@ public class BookServiceImpl implements BookService {
                 book.getLanguage(),
                 book.getPublicationYear(),
                 book.getPages()
-                );
+        );
     }
 
     /**
