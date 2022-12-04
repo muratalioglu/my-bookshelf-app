@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface MemberBooksRepository extends JpaRepository<MemberBooks, Integer> {
 
-    List<MemberBooks> findByMemberId(Integer memberId);
+    List<MemberBooks> findByMemberIdAndDeletedFalse(Integer memberId);
 
     boolean existsByBookIdAndMemberIdAndDeletedFalse(Integer bookId, Integer memberId);
 

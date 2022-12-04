@@ -2,7 +2,6 @@ package com.example.mybookshelfapi.service;
 
 import com.example.mybookshelfapi.dto.MemberBooksDTO;
 import com.example.mybookshelfapi.dto.MemberBooksInDTO;
-import com.example.mybookshelfapi.entity.Member;
 import com.example.mybookshelfapi.entity.MemberBooks;
 import com.example.mybookshelfapi.repository.BookRepository;
 import com.example.mybookshelfapi.repository.MemberBooksRepository;
@@ -37,7 +36,7 @@ public class MemberBooksServiceImpl implements MemberBooksService {
 
         validateMemberExistence(memberId);
 
-        List<MemberBooks> memberBooksList = memberBooksRepository.findByMemberId(memberId);
+        List<MemberBooks> memberBooksList = memberBooksRepository.findByMemberIdAndDeletedFalse(memberId);
         if (memberBooksList.isEmpty())
             return null;
 
