@@ -9,25 +9,7 @@ import java.util.List;
 @AllArgsConstructor
 public class MemberBooksDTO {
 
-    Member member;
-    List<Book> books;
+    Integer memberId;
 
-    @Data
-    @AllArgsConstructor
-    public static class Member {
-        Integer id;
-        String name;
-    }
-
-    @Data
-    @AllArgsConstructor
-    public static class Book {
-        String title;
-        String description;
-        String author;
-        String isbn;
-        String language;
-        Integer publicationYear;
-        Integer pages;
-    }
+    List<Integer> bookIds;
 }

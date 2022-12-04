@@ -1,6 +1,7 @@
 package com.example.mybookshelfapi.service;
 
 import com.example.mybookshelfapi.dto.MemberBooksDTO;
+import com.example.mybookshelfapi.dto.MemberBooksInDTO;
 import com.example.mybookshelfapi.entity.Book;
 import com.example.mybookshelfapi.entity.Member;
 import com.example.mybookshelfapi.entity.MemberBooks;
@@ -11,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -44,32 +47,14 @@ public class MemberBooksServiceImpl implements MemberBooksService {
         if (memberBooksList.isEmpty())
             return null;
 
-        Set<Integer> bookIdSet =
+        List<Integer> bookIdList =
                 memberBooksList.stream()
                         .map(MemberBooks::getBookId)
-                        .collect(Collectors.toSet());
+                        .collect(Collectors.toList());
 
-        List<Book> bookList = bookRepository.findAllById(bookIdSet);
+        return new MemberBooksDTO(memberId, bookIdList);
+    }
 
-        return new MemberBooksDTO(
-                new MemberBooksDTO.Member(
-                        memberId,
-                        String.format("%s %s", member.getFirstName(), member.getLastName())
-                ),
-                bookList.stream()
-                        .map(
-                                book -> new MemberBooksDTO.Book(
-                                        book.getTitle(),
-                                        book.getDescription(),
-                                        book.getAuthor(),
-                                        book.getIsbn(),
-                                        book.getLanguage(),
-                                        book.getPublicationYear(),
-                                        book.getPages()
-                                )
-                        )
-                        .collect(Collectors.toList())
-        );
     @Override
     public Integer addBookToMember(MemberBooksInDTO dto, Integer memberId) {
 
