@@ -68,7 +68,6 @@ public class MemberBookServiceImpl implements MemberBookService {
         MemberBook memberBook = new MemberBook();
         memberBook.setMemberId(memberId);
         memberBook.setBookId(dto.getBookId());
-        memberBook.setCreateTime(new Timestamp(System.currentTimeMillis()));
 
         memberBookRepository.save(memberBook);
     }
