@@ -31,6 +31,9 @@ public class MemberBook {
     Timestamp createTime;
 
     @Column
+    Timestamp createTime = new Timestamp(System.currentTimeMillis());
+
+    @Column
     Boolean deleted = false;
 
     @Column
