@@ -70,5 +70,34 @@ public class MemberBooksServiceImpl implements MemberBooksService {
                         )
                         .collect(Collectors.toList())
         );
+    @Override
+    public Integer addBookToMember(MemberBooksInDTO dto, Integer memberId) {
+
+        if (!bookRepository.existsById(dto.getBookId()))
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Book cannot found with the given id!"
+            );
+
+        if (!memberRepository.existsById(memberId))
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Member cannot found with the given id!"
+            );
+
+        if (memberBooksRepository.existsByBookIdAndMemberIdAndDeletedFalse(dto.getBookId(), memberId))
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    String.format("The book with id [%d] is already on the member's shelf.", dto.getBookId())
+            );
+
+        MemberBooks memberBooks = new MemberBooks();
+        memberBooks.setMemberId(memberId);
+        memberBooks.setBookId(dto.getBookId());
+        memberBooks.setCreateTime(new Timestamp(System.currentTimeMillis()));
+
+        memberBooksRepository.save(memberBooks);
+
+        return memberBooks.getId();
     }
 }
