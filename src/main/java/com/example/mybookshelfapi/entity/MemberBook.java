@@ -15,7 +15,7 @@ import java.sql.Timestamp;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MemberBooks {
+public class MemberBook {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,10 +1,10 @@
 package com.example.mybookshelfapi.service;
 
-import com.example.mybookshelfapi.dto.MemberBooksDTO;
-import com.example.mybookshelfapi.dto.MemberBooksInDTO;
-import com.example.mybookshelfapi.entity.MemberBooks;
+import com.example.mybookshelfapi.dto.MemberBookDTO;
+import com.example.mybookshelfapi.dto.MemberBookInDTO;
+import com.example.mybookshelfapi.entity.MemberBook;
 import com.example.mybookshelfapi.repository.BookRepository;
-import com.example.mybookshelfapi.repository.MemberBooksRepository;
+import com.example.mybookshelfapi.repository.MemberBookRepository;
 import com.example.mybookshelfapi.repository.MemberRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -16,40 +16,40 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class MemberBooksServiceImpl implements MemberBooksService {
+public class MemberBookServiceImpl implements MemberBookService {
 
     final BookRepository bookRepository;
     final MemberRepository memberRepository;
-    final MemberBooksRepository memberBooksRepository;
+    final MemberBookRepository memberBookRepository;
 
-    public MemberBooksServiceImpl(BookRepository bookRepository,
-                                  MemberRepository memberRepository,
-                                  MemberBooksRepository memberBooksRepository) {
+    public MemberBookServiceImpl(BookRepository bookRepository,
+                                 MemberRepository memberRepository,
+                                 MemberBookRepository memberBookRepository) {
 
         this.bookRepository = bookRepository;
         this.memberRepository = memberRepository;
-        this.memberBooksRepository = memberBooksRepository;
+        this.memberBookRepository = memberBookRepository;
     }
 
     @Override
-    public MemberBooksDTO getMemberBooks(Integer memberId) {
+    public MemberBookDTO getMemberBooks(Integer memberId) {
 
         validateMemberExistence(memberId);
 
-        List<MemberBooks> memberBooksList = memberBooksRepository.findByMemberIdAndDeletedFalse(memberId);
-        if (memberBooksList.isEmpty())
+        List<MemberBook> memberBookList = memberBookRepository.findByMemberIdAndDeletedFalse(memberId);
+        if (memberBookList.isEmpty())
             return null;
 
         List<Integer> bookIdList =
-                memberBooksList.stream()
-                        .map(MemberBooks::getBookId)
+                memberBookList.stream()
+                        .map(MemberBook::getBookId)
                         .collect(Collectors.toList());
 
-        return new MemberBooksDTO(memberId, bookIdList);
+        return new MemberBookDTO(memberId, bookIdList);
     }
 
     @Override
-    public void addBookToMember(MemberBooksInDTO dto, Integer memberId) {
+    public void addBookToMember(MemberBookInDTO dto, Integer memberId) {
 
         if (!bookRepository.existsById(dto.getBookId()))
             throw new ResponseStatusException(
@@ -59,18 +59,18 @@ public class MemberBooksServiceImpl implements MemberBooksService {
 
         validateMemberExistence(memberId);
 
-        if (memberBooksRepository.existsByBookIdAndMemberIdAndDeletedFalse(dto.getBookId(), memberId))
+        if (memberBookRepository.existsByBookIdAndMemberIdAndDeletedFalse(dto.getBookId(), memberId))
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
                     String.format("The book with id [%d] is already on the member's shelf.", dto.getBookId())
             );
 
-        MemberBooks memberBooks = new MemberBooks();
-        memberBooks.setMemberId(memberId);
-        memberBooks.setBookId(dto.getBookId());
-        memberBooks.setCreateTime(new Timestamp(System.currentTimeMillis()));
+        MemberBook memberBook = new MemberBook();
+        memberBook.setMemberId(memberId);
+        memberBook.setBookId(dto.getBookId());
+        memberBook.setCreateTime(new Timestamp(System.currentTimeMillis()));
 
-        memberBooksRepository.save(memberBooks);
+        memberBookRepository.save(memberBook);
     }
 
     private void validateMemberExistence(Integer memberId) {
@@ -86,13 +86,13 @@ public class MemberBooksServiceImpl implements MemberBooksService {
 
         validateMemberExistence(memberId);
 
-        Optional<MemberBooks> memberBooksOptional = memberBooksRepository.findByMemberIdAndBookIdAndDeletedFalse(memberId, bookId);
+        Optional<MemberBook> memberBookOptional = memberBookRepository.findByMemberIdAndBookIdAndDeletedFalse(memberId, bookId);
 
-        memberBooksOptional.ifPresentOrElse(
-                (memberBooks) -> {
-                    memberBooks.setDeleted(true);
-                    memberBooks.setDeleteTime(new Timestamp(System.currentTimeMillis()));
-                    memberBooksRepository.save(memberBooks);
+        memberBookOptional.ifPresentOrElse(
+                (memberBook) -> {
+                    memberBook.setDeleted(true);
+                    memberBook.setDeleteTime(new Timestamp(System.currentTimeMillis()));
+                    memberBookRepository.save(memberBook);
                 },
                 () -> {
                     throw new ResponseStatusException(

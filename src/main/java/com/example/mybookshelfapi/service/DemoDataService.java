@@ -2,9 +2,9 @@ package com.example.mybookshelfapi.service;
 
 import com.example.mybookshelfapi.entity.Book;
 import com.example.mybookshelfapi.entity.Member;
-import com.example.mybookshelfapi.entity.MemberBooks;
+import com.example.mybookshelfapi.entity.MemberBook;
 import com.example.mybookshelfapi.repository.BookRepository;
-import com.example.mybookshelfapi.repository.MemberBooksRepository;
+import com.example.mybookshelfapi.repository.MemberBookRepository;
 import com.example.mybookshelfapi.repository.MemberRepository;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -24,7 +24,7 @@ public class DemoDataService implements CommandLineRunner {
 
     final BookRepository bookRepository;
     final MemberRepository memberRepository;
-    final MemberBooksRepository memberBooksRepository;
+    final MemberBookRepository memberBookRepository;
 
     @Override
     public void run(String... args) {
@@ -38,7 +38,8 @@ public class DemoDataService implements CommandLineRunner {
                             new String(
                                     Files.readAllBytes(booksJsonFile.toPath())
                             ),
-                            new TypeToken<List<Book>>() {}.getType()
+                            new TypeToken<List<Book>>() {
+                            }.getType()
                     );
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -55,7 +56,8 @@ public class DemoDataService implements CommandLineRunner {
                             new String(
                                     Files.readAllBytes(membersJsonFile.toPath())
                             ),
-                            new TypeToken<List<Member>>() {}.getType()
+                            new TypeToken<List<Member>>() {
+                            }.getType()
                     );
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -64,22 +66,23 @@ public class DemoDataService implements CommandLineRunner {
         memberRepository.saveAll(memberList);
 
         File memberBooksJsonFile;
-        List<MemberBooks> memberBooksList;
+        List<MemberBook> memberBookList;
         try {
             memberBooksJsonFile = new ClassPathResource("static/memberBooks.json").getFile();
-            memberBooksList =
+            memberBookList =
                     new Gson().fromJson(
                             new String(
                                     Files.readAllBytes(
                                             memberBooksJsonFile.toPath()
                                     )
                             ),
-                            new TypeToken<List<MemberBooks>>() {}.getType()
+                            new TypeToken<List<MemberBook>>() {
+                            }.getType()
                     );
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        memberBooksRepository.saveAll(memberBooksList);
+        memberBookRepository.saveAll(memberBookList);
     }
 }

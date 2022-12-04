@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class MemberBooksDTO {
+public class MemberBookDTO {
 
     Integer memberId;
 

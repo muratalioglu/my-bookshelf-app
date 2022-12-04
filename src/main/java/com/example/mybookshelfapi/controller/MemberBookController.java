@@ -1,8 +1,8 @@
 package com.example.mybookshelfapi.controller;
 
-import com.example.mybookshelfapi.dto.MemberBooksDTO;
-import com.example.mybookshelfapi.dto.MemberBooksInDTO;
-import com.example.mybookshelfapi.service.MemberBooksService;
+import com.example.mybookshelfapi.dto.MemberBookDTO;
+import com.example.mybookshelfapi.dto.MemberBookInDTO;
+import com.example.mybookshelfapi.service.MemberBookService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,31 +18,31 @@ import javax.validation.constraints.Positive;
 
 @RestController
 @RequestMapping("/member-books")
-public class MemberBooksController {
+public class MemberBookController {
 
-    final MemberBooksService memberBooksService;
+    final MemberBookService memberBookService;
 
-    public MemberBooksController(MemberBooksService memberBooksService) {
-        this.memberBooksService = memberBooksService;
+    public MemberBookController(MemberBookService memberBookService) {
+        this.memberBookService = memberBookService;
     }
 
     @GetMapping("/{memberId}")
-    public ResponseEntity<MemberBooksDTO> getMemberBooks(@PathVariable @Positive Integer memberId) {
+    public ResponseEntity<MemberBookDTO> getMemberBooks(@PathVariable @Positive Integer memberId) {
 
-        MemberBooksDTO memberBooksDTO = memberBooksService.getMemberBooks(memberId);
-        if (memberBooksDTO == null)
+        MemberBookDTO memberBookDTO = memberBookService.getMemberBooks(memberId);
+        if (memberBookDTO == null)
             return ResponseEntity.noContent().build();
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(memberBooksDTO);
+                .body(memberBookDTO);
     }
 
     @PostMapping("/{memberId}")
     public ResponseEntity<Void> addBookToMember(@PathVariable @Positive Integer memberId,
-                                                @RequestBody MemberBooksInDTO dto) {
+                                                @RequestBody MemberBookInDTO dto) {
 
-        memberBooksService.addBookToMember(dto, memberId);
+        memberBookService.addBookToMember(dto, memberId);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -53,7 +53,7 @@ public class MemberBooksController {
     public ResponseEntity<Void> removeBookFromMember(@PathVariable @Positive Integer memberId,
                                                      @RequestParam @Positive Integer bookId) {
 
-        memberBooksService.removeBookFromMember(bookId, memberId);
+        memberBookService.removeBookFromMember(bookId, memberId);
 
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
