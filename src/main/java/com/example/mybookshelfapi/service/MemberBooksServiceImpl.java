@@ -2,7 +2,6 @@ package com.example.mybookshelfapi.service;
 
 import com.example.mybookshelfapi.dto.MemberBooksDTO;
 import com.example.mybookshelfapi.dto.MemberBooksInDTO;
-import com.example.mybookshelfapi.entity.Book;
 import com.example.mybookshelfapi.entity.Member;
 import com.example.mybookshelfapi.entity.MemberBooks;
 import com.example.mybookshelfapi.repository.BookRepository;
@@ -13,10 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,10 +35,7 @@ public class MemberBooksServiceImpl implements MemberBooksService {
     @Override
     public MemberBooksDTO getMemberBooks(Integer memberId) {
 
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Member cannot found with the given id!")
-                );
+        validateMemberExistence(memberId);
 
         List<MemberBooks> memberBooksList = memberBooksRepository.findByMemberId(memberId);
         if (memberBooksList.isEmpty())
@@ -56,7 +50,7 @@ public class MemberBooksServiceImpl implements MemberBooksService {
     }
 
     @Override
-    public Integer addBookToMember(MemberBooksInDTO dto, Integer memberId) {
+    public void addBookToMember(MemberBooksInDTO dto, Integer memberId) {
 
         if (!bookRepository.existsById(dto.getBookId()))
             throw new ResponseStatusException(
@@ -64,11 +58,7 @@ public class MemberBooksServiceImpl implements MemberBooksService {
                     "Book cannot found with the given id!"
             );
 
-        if (!memberRepository.existsById(memberId))
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "Member cannot found with the given id!"
-            );
+        validateMemberExistence(memberId);
 
         if (memberBooksRepository.existsByBookIdAndMemberIdAndDeletedFalse(dto.getBookId(), memberId))
             throw new ResponseStatusException(
@@ -82,7 +72,35 @@ public class MemberBooksServiceImpl implements MemberBooksService {
         memberBooks.setCreateTime(new Timestamp(System.currentTimeMillis()));
 
         memberBooksRepository.save(memberBooks);
+    }
 
-        return memberBooks.getId();
+    private void validateMemberExistence(Integer memberId) {
+        if (!memberRepository.existsById(memberId))
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Member cannot found with the given id!"
+            );
+    }
+
+    @Override
+    public void removeBookFromMember(Integer bookId, Integer memberId) {
+
+        validateMemberExistence(memberId);
+
+        Optional<MemberBooks> memberBooksOptional = memberBooksRepository.findByMemberIdAndBookIdAndDeletedFalse(memberId, bookId);
+
+        memberBooksOptional.ifPresentOrElse(
+                (memberBooks) -> {
+                    memberBooks.setDeleted(true);
+                    memberBooks.setDeleteTime(new Timestamp(System.currentTimeMillis()));
+                    memberBooksRepository.save(memberBooks);
+                },
+                () -> {
+                    throw new ResponseStatusException(
+                            HttpStatus.NOT_FOUND,
+                            "Member Book cannot fount!"
+                    );
+                }
+        );
     }
 }

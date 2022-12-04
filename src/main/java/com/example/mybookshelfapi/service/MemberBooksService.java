@@ -7,5 +7,7 @@ public interface MemberBooksService {
 
     MemberBooksDTO getMemberBooks(Integer memberId);
 
-    Integer addBookToMember(MemberBooksInDTO dto, Integer memberId);
+    void addBookToMember(MemberBooksInDTO dto, Integer memberId);
+
+    void removeBookFromMember(Integer bookId, Integer memberId);
 }
