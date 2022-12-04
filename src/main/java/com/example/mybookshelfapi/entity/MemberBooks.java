@@ -31,7 +31,7 @@ public class MemberBooks {
     Timestamp createTime;
 
     @Column
-    Boolean deleted;
+    Boolean deleted = false;
 
     @Column
     Timestamp deleteTime;
