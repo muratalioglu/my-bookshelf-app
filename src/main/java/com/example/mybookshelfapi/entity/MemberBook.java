@@ -28,7 +28,10 @@ public class MemberBook {
     Integer bookId;
 
     @Column
-    Timestamp createTime;
+    String status;
+
+    @Column
+    Integer currentPage;
 
     @Column
     Timestamp createTime = new Timestamp(System.currentTimeMillis());
