@@ -155,6 +155,13 @@ public class BookServiceImpl implements BookService {
     }
 
     private String validateString(String str) {
-        return str == null ? null : str.trim();
+        if (str == null)
+            return null;
+
+        str = str.trim();
+        if (str.isEmpty())
+            return null;
+
+        return str;
     }
 }
