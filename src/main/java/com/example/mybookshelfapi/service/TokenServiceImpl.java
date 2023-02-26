@@ -27,16 +27,17 @@ public class TokenServiceImpl implements TokenService {
 
         Instant now = Instant.now();
 
-        String scope = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(" "));
-
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")
                 .issuedAt(now)
-                .expiresAt(now.plus(20, ChronoUnit.SECONDS))
+                .expiresAt(now.plus(10, ChronoUnit.MINUTES))
                 .subject(authentication.getName())
-                .claim("scope", scope)
+                .claim(
+                        "scope",
+                        authentication.getAuthorities().stream()
+                                .map(GrantedAuthority::getAuthority)
+                                .collect(Collectors.toSet())
+                )
                 .build();
 
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();

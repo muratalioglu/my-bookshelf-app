@@ -6,6 +6,7 @@ import com.example.mybookshelfapi.service.BookService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,6 +47,7 @@ public class BookController {
         return ResponseEntity.ok(bookService.getBook(id));
     }
 
+    @PreAuthorize("hasAuthority('SCOPE_create_book')")
     @PostMapping
     public ResponseEntity<?> createBook(@RequestBody @Valid BookInDTO dto) {
 
