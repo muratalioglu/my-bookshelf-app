@@ -51,7 +51,6 @@ public class SecurityConfig {
                         .antMatchers(HttpMethod.GET, "/books").permitAll()
                         .anyRequest().authenticated())
                 .csrf(CsrfConfigurer::disable)
-                .authorizeRequests(auth -> auth.anyRequest().authenticated())
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(Customizer.withDefaults());
