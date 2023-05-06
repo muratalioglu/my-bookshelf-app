@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.sql.Timestamp;
 
 @Entity
 @Data
@@ -41,13 +42,17 @@ public class Book {
     @Column
     Integer pages;
 
+    @Column
+    Timestamp deleteTime;
+
     public Book(String title,
                 String description,
                 String author,
                 String isbn,
                 String language,
                 Integer publicationYear,
-                Integer pages) {
+                Integer pages,
+                Timestamp deleteTime) {
 
         this.title = title;
         this.description = description;
@@ -56,5 +61,6 @@ public class Book {
         this.language = language;
         this.publicationYear = publicationYear;
         this.pages = pages;
+        this.deleteTime = deleteTime;
     }
 }

@@ -15,4 +15,6 @@ public interface BookService {
 
     void updateBook(Integer id, String title, String description, String author,
                     String isbn, String language, Integer publicationYear, Integer pages);
+
+    void deleteBook(Integer id);
 }

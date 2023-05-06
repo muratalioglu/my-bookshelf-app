@@ -14,14 +14,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
-import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -35,27 +33,26 @@ public class SecurityConfig {
     }
 
     @Bean
-    public InMemoryUserDetailsManager user() {
-        return new InMemoryUserDetailsManager(
-                User.withUsername("murat").password("{noop}myp4ssw0rd")
-                        .authorities("test")
-                        .build()
-        );
-    }
-
-    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-         http
+        http
                 .authorizeRequests(auth -> auth
                         .antMatchers("/h2-console/**").permitAll()
-                        .antMatchers(HttpMethod.GET, "/books").permitAll()
+                        .antMatchers("/auth/**").permitAll()
+                        .antMatchers(HttpMethod.POST, "/books/**").hasAuthority("SCOPE_editor")
+                        .antMatchers(HttpMethod.PATCH, "/books/**").hasAuthority("SCOPE_editor")
+                        .antMatchers("/books/**").hasAuthority("SCOPE_user")
                         .anyRequest().authenticated())
                 .csrf(CsrfConfigurer::disable)
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(Customizer.withDefaults());
 
-                return http.headers().frameOptions().sameOrigin().and().build();
+        return http.headers().frameOptions().sameOrigin().and().build();
+    }
+
+    @Bean
+    BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean

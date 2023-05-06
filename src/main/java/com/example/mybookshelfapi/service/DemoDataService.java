@@ -1,7 +1,6 @@
 package com.example.mybookshelfapi.service;
 
 import com.example.mybookshelfapi.entity.Book;
-import com.example.mybookshelfapi.entity.Member;
 import com.example.mybookshelfapi.entity.MemberBook;
 import com.example.mybookshelfapi.repository.BookRepository;
 import com.example.mybookshelfapi.repository.MemberBookRepository;
@@ -46,24 +45,6 @@ public class DemoDataService implements CommandLineRunner {
         }
 
         bookRepository.saveAll(bookList);
-
-        File membersJsonFile;
-        List<Member> memberList;
-        try {
-            membersJsonFile = new ClassPathResource("static/members.json").getFile();
-            memberList =
-                    new Gson().fromJson(
-                            new String(
-                                    Files.readAllBytes(membersJsonFile.toPath())
-                            ),
-                            new TypeToken<List<Member>>() {
-                            }.getType()
-                    );
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        memberRepository.saveAll(memberList);
 
         File memberBooksJsonFile;
         List<MemberBook> memberBookList;

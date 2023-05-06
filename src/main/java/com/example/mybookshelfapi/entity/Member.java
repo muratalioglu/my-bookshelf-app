@@ -4,15 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -35,4 +29,11 @@ public class Member {
 
     @Column
     Timestamp registrationTime;
+
+    @Column
+    String password;
+
+    @OneToMany
+    @JoinColumn(name = "member_id")
+    Set<Authority> authorities;
 }

@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Date;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,7 +23,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<BookDTO> getAllBooks() {
-        return bookRepository.findAll().stream()
+        return bookRepository.findByDeleteTimeIsNull().stream()
                 .map(
                         book -> new BookDTO(
                                 book.getId(),
@@ -65,7 +65,7 @@ public class BookServiceImpl implements BookService {
      * @throws ResponseStatusException If no Book found with the given id
      */
     private Book getBookById(Integer id) {
-        return bookRepository.findById(id)
+        return bookRepository.findByIdAndDeleteTimeIsNull(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "No Book found with given id")
                 );
@@ -94,7 +94,8 @@ public class BookServiceImpl implements BookService {
                 isbn,
                 language,
                 dto.getPublicationYear(),
-                dto.getPages()
+                dto.getPages(),
+                null
         );
 
         bookRepository.save(book);
@@ -152,6 +153,15 @@ public class BookServiceImpl implements BookService {
 
         if (updated)
             bookRepository.save(book);
+    }
+
+    @Override
+    public void deleteBook(Integer id) {
+
+        Book book = getBookById(id);
+        book.setDeleteTime(new Timestamp(System.currentTimeMillis()));
+
+        bookRepository.save(book);
     }
 
     private String validateString(String str) {
