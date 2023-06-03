@@ -22,4 +22,9 @@ public class Authority {
 
     @Column
     String authority;
+
+    public Authority(Integer memberId, String authority) {
+        this.memberId = memberId;
+        this.authority = authority;
+    }
 }
