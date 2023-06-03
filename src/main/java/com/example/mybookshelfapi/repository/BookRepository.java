@@ -12,5 +12,5 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
 
     Optional<Book> findByIdAndDeleteTimeIsNull(Integer id);
 
-    boolean existsByTitleIgnoreCase(String title);
+    boolean existsByTitleIgnoreCaseAndDeleteTimeIsNull(String title);
 }

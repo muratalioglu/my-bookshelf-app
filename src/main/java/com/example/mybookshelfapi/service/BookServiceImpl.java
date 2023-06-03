@@ -76,7 +76,7 @@ public class BookServiceImpl implements BookService {
 
         String title = validateString(dto.getTitle());
 
-        if (bookRepository.existsByTitleIgnoreCase(title))
+        if (bookRepository.existsByTitleIgnoreCaseAndDeleteTimeIsNull(title))
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
                     String.format("Book with title %s already exists!", title)
