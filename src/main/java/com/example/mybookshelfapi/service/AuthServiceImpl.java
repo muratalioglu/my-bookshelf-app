@@ -94,7 +94,7 @@ public class AuthServiceImpl implements AuthService {
                 .issuer("self")
                 .issuedAt(now)
                 .expiresAt(now.plus(10, ChronoUnit.MINUTES))
-                .subject(email)
+                .subject(member.getId().toString())
                 .claim("scope",
                         member.getAuthorities().stream().map(Authority::getAuthority).collect(Collectors.toSet()))
                 .build();
