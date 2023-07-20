@@ -10,4 +10,6 @@ public interface MemberBookService {
     void addBookToMember(MemberBookInDTO dto, Integer memberId);
 
     void removeBookFromMember(Integer bookId, Integer memberId);
+
+    void updateMemberBook(Integer memberBookId, String status, Integer currentPage);
 }

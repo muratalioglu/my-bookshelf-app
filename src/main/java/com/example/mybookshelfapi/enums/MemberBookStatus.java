@@ -1,5 +1,7 @@
 package com.example.mybookshelfapi.enums;
 
+import java.util.Arrays;
+
 public enum MemberBookStatus {
 
     TO_READ("toRead"),
@@ -14,5 +16,9 @@ public enum MemberBookStatus {
 
     public String getValue() {
         return value;
+    }
+
+    public static boolean isValid(String value) {
+        return Arrays.stream(values()).anyMatch(v -> v.getValue().equals(value));
     }
 }

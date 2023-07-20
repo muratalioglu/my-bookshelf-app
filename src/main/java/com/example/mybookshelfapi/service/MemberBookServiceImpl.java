@@ -2,7 +2,9 @@ package com.example.mybookshelfapi.service;
 
 import com.example.mybookshelfapi.dto.MemberBookDTO;
 import com.example.mybookshelfapi.dto.MemberBookInDTO;
+import com.example.mybookshelfapi.entity.Book;
 import com.example.mybookshelfapi.entity.MemberBook;
+import com.example.mybookshelfapi.enums.MemberBookStatus;
 import com.example.mybookshelfapi.repository.BookRepository;
 import com.example.mybookshelfapi.repository.MemberBookRepository;
 import com.example.mybookshelfapi.repository.MemberRepository;
@@ -12,7 +14,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,18 +39,35 @@ public class MemberBookServiceImpl implements MemberBookService {
     @Override
     public MemberBookDTO getMemberBooks(Integer memberId) {
 
-        validateMemberExistence(memberId);
-
         List<MemberBook> memberBookList = memberBookRepository.findByMemberIdAndDeletedFalse(memberId);
         if (memberBookList.isEmpty())
             return null;
 
-        List<Integer> bookIdList =
-                memberBookList.stream()
-                        .map(MemberBook::getBookId)
-                        .collect(Collectors.toList());
+        Set<Integer> bookIdSet = memberBookList.stream()
+                .map(MemberBook::getBookId)
+                .collect(Collectors.toSet());
 
-        return new MemberBookDTO(memberId, bookIdList);
+        Map<Integer, Book> bookMap =
+                bookRepository.findByIdInAndDeleteTimeIsNull(bookIdSet).stream()
+                        .collect(
+                                Collectors.toMap(
+                                        Book::getId,
+                                        Function.identity()
+                                )
+                        );
+
+        return new MemberBookDTO(
+                memberId,
+                memberBookList.stream()
+                        .map(memberBook ->
+                                new MemberBookDTO.Book(
+                                        memberBook.getBookId(),
+                                        bookMap.get(memberBook.getBookId()).getTitle(),
+                                        memberBook.getStatus(),
+                                        memberBook.getCurrentPage()
+                                )
+                        )
+                        .collect(Collectors.toList()));
     }
 
     @Override
@@ -56,8 +78,6 @@ public class MemberBookServiceImpl implements MemberBookService {
                     HttpStatus.NOT_FOUND,
                     "Book cannot found with the given id!"
             );
-
-        validateMemberExistence(memberId);
 
         if (memberBookRepository.existsByBookIdAndMemberIdAndDeletedFalse(dto.getBookId(), memberId))
             throw new ResponseStatusException(
@@ -83,8 +103,6 @@ public class MemberBookServiceImpl implements MemberBookService {
     @Override
     public void removeBookFromMember(Integer bookId, Integer memberId) {
 
-        validateMemberExistence(memberId);
-
         Optional<MemberBook> memberBookOptional = memberBookRepository.findByMemberIdAndBookIdAndDeletedFalse(memberId, bookId);
 
         memberBookOptional.ifPresentOrElse(
@@ -96,9 +114,50 @@ public class MemberBookServiceImpl implements MemberBookService {
                 () -> {
                     throw new ResponseStatusException(
                             HttpStatus.NOT_FOUND,
-                            "Member Book cannot fount!"
+                            "Member Book cannot found!"
                     );
                 }
         );
+    }
+
+    @Override
+    public void updateMemberBook(Integer id, String status, Integer currentPage) {
+
+        if (status == null && currentPage == null)
+            return;
+
+        Optional<MemberBook> memberBookOptional = memberBookRepository.findById(id);
+        if (memberBookOptional.isEmpty())
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Member Book cannot found!"
+            );
+
+        MemberBook memberBook = memberBookOptional.get();
+        boolean updated = false;
+
+        if (status != null && !status.isEmpty()) {
+
+            if (!MemberBookStatus.isValid(status))
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Invalid member book status!"
+                );
+
+            if (memberBook.getStatus() == null || !memberBook.getStatus().equals(status)) {
+                memberBook.setStatus(status);
+                updated = true;
+            }
+        }
+
+        if (currentPage != null) {
+            if (memberBook.getCurrentPage() == null || !memberBook.getCurrentPage().equals(currentPage)) {
+                memberBook.setCurrentPage(currentPage);
+                updated = true;
+            }
+        }
+
+        if (updated)
+            memberBookRepository.save(memberBook);
     }
 }

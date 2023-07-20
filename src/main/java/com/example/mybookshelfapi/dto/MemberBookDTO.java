@@ -11,5 +11,14 @@ public class MemberBookDTO {
 
     Integer memberId;
 
-    List<Integer> bookIds;
+    List<Book> books;
+
+    @Data
+    @AllArgsConstructor
+    public static class Book {
+        Integer id;
+        String name;
+        String status;
+        Integer currentPage;
+    }
 }

@@ -40,6 +40,7 @@ public class SecurityConfig {
                         .antMatchers("/auth/**").permitAll()
                         .antMatchers(HttpMethod.POST, "/books/**").hasAuthority("SCOPE_editor")
                         .antMatchers(HttpMethod.PATCH, "/books/**").hasAuthority("SCOPE_editor")
+                        .antMatchers(HttpMethod.PATCH, "/member-books/**").permitAll()
                         .antMatchers("/books/**").hasAuthority("SCOPE_user")
                         .anyRequest().authenticated())
                 .csrf(CsrfConfigurer::disable)

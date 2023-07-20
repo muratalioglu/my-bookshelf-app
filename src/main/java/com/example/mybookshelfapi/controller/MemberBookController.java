@@ -7,14 +7,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 import java.security.Principal;
 import java.util.Collection;
 
 @RestController
 @RequestMapping("/member-books")
+@Validated
 public class MemberBookController {
 
     final MemberBookService memberBookService;
@@ -24,7 +28,14 @@ public class MemberBookController {
     }
 
     @GetMapping("/{memberId}")
-    public ResponseEntity<MemberBookDTO> getMemberBooks(@PathVariable @Positive Integer memberId) {
+    public ResponseEntity<MemberBookDTO> getMemberBooks(Principal principal,
+                                                        @PathVariable @Positive Integer memberId) {
+
+        JwtAuthenticationToken jwtToken = (JwtAuthenticationToken) principal;
+        Collection<GrantedAuthority> authorities = jwtToken.getAuthorities();
+
+        if (authorities.stream().noneMatch(authority -> authority.getAuthority().endsWith("editor")))
+            memberId = Integer.parseInt(principal.getName());
 
         MemberBookDTO memberBookDTO = memberBookService.getMemberBooks(memberId);
         if (memberBookDTO == null)
@@ -41,7 +52,7 @@ public class MemberBookController {
                                                 @PathVariable @Positive Integer memberId) {
 
         JwtAuthenticationToken jwtToken = (JwtAuthenticationToken) principal;
-        Collection<GrantedAuthority> authorities= jwtToken.getAuthorities();
+        Collection<GrantedAuthority> authorities = jwtToken.getAuthorities();
 
         if (authorities.stream().noneMatch(authority -> authority.getAuthority().endsWith("editor")))
             memberId = Integer.parseInt(principal.getName());
@@ -53,10 +64,25 @@ public class MemberBookController {
                 .build();
     }
 
-    @DeleteMapping("/{memberId}")
+    @PatchMapping("/{id}")
+    public ResponseEntity<Void> updateMemberBook(Principal principal,
+                                                 @PathVariable @Positive Integer id,
+                                                 @RequestParam(required = false) @Size(max = 20) String status,
+                                                 @RequestParam(required = false) @Min(0) @Positive Integer currentPage) {
+
+        memberBookService.updateMemberBook(
+                id,
+                status,
+                currentPage
+        );
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{memberId}/{bookId}")
     public ResponseEntity<Void> removeBookFromMember(Principal principal,
                                                      @PathVariable @Positive Integer memberId,
-                                                     @RequestParam @Positive Integer bookId) {
+                                                     @PathVariable @Positive Integer bookId) {
 
         JwtAuthenticationToken jwtToken = (JwtAuthenticationToken) principal;
         Collection<GrantedAuthority> authorities= jwtToken.getAuthorities();
