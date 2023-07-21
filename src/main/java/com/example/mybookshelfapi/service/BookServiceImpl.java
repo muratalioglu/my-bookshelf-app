@@ -118,7 +118,10 @@ public class BookServiceImpl implements BookService {
         }
 
         description = validateString(description);
-        if (description != null && !description.equals(book.getDescription())) {
+        if (description == null && book.getDescription() != null) {
+            book.setDescription(null);
+            updated = true;
+        } else if (description != null && !description.equals(book.getDescription())) {
             book.setDescription(description);
             updated = true;
         }

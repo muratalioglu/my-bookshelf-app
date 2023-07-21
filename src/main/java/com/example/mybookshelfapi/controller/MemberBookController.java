@@ -85,7 +85,7 @@ public class MemberBookController {
                                                      @PathVariable @Positive Integer bookId) {
 
         JwtAuthenticationToken jwtToken = (JwtAuthenticationToken) principal;
-        Collection<GrantedAuthority> authorities= jwtToken.getAuthorities();
+        Collection<GrantedAuthority> authorities = jwtToken.getAuthorities();
 
         if (authorities.stream().noneMatch(authority -> authority.getAuthority().endsWith("editor")))
             memberId = Integer.parseInt(principal.getName());
