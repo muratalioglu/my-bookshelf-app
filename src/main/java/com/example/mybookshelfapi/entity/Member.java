@@ -34,7 +34,7 @@ public class Member implements UserDetails {
     @Column
     String password;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "member_id")
     Set<Authority> authorities;
 
