@@ -79,7 +79,7 @@ public class AuthServiceImpl implements AuthService {
         if (member == null)
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
-                    "Member with email %s not found"
+                    String.format("Member with email %s not found", email)
             );
 
         if (!bCryptPasswordEncoder.matches(password, member.getPassword()))
