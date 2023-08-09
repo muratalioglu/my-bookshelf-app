@@ -75,6 +75,32 @@ public class BookControllerTest {
     }
 
     @Test
+    public void testGetBook() throws Exception {
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .get("/books/" + 1)
+                                .header(
+                                        HttpHeaders.AUTHORIZATION,
+                                        "Bearer " + authService.login(new AuthInDTO("admin@mybookshelf", "P4ssw0rd")
+                                        )
+                                )
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .get("/books/" + Integer.MAX_VALUE)
+                                .header(
+                                        HttpHeaders.AUTHORIZATION,
+                                        "Bearer " + authService.login(new AuthInDTO("admin@mybookshelf", "P4ssw0rd")
+                                        )
+                                )
+                )
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
     public void testCreateBook() throws Exception {
 
         BookInDTO bookInDTO = new BookInDTO();
