@@ -29,8 +29,6 @@ import java.util.Set;
 @AutoConfigureMockMvc
 public class BookControllerTest {
 
-    private final BookController bookController;
-
     private final AuthService authService;
 
     private final AuthorityRepository authorityRepository;
@@ -41,14 +39,12 @@ public class BookControllerTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
-    public BookControllerTest(BookController bookController,
-                              AuthService authService,
+    public BookControllerTest(AuthService authService,
                               AuthorityRepository authorityRepository,
                               MemberRepository memberRepository,
                               BCryptPasswordEncoder bCryptPasswordEncoder,
-                              MockMvc mockMvc ) {
+                              MockMvc mockMvc) {
 
-        this.bookController = bookController;
         this.authService = authService;
         this.authorityRepository = authorityRepository;
         this.memberRepository = memberRepository;
@@ -133,6 +129,20 @@ public class BookControllerTest {
         mockMvc.perform(
                         MockMvcRequestBuilders
                                 .patch("/books/1?description=TestAmacliDescription")
+                                .header(
+                                        HttpHeaders.AUTHORIZATION,
+                                        "Bearer " + authService.login(new AuthInDTO("admin@mybookshelf", "P4ssw0rd"))
+                                )
+                )
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+
+    @Test
+    public void testDeleteBook() throws Exception {
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .delete("/books/" + 1)
                                 .header(
                                         HttpHeaders.AUTHORIZATION,
                                         "Bearer " + authService.login(new AuthInDTO("admin@mybookshelf", "P4ssw0rd"))
