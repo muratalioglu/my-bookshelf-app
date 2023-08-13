@@ -126,4 +126,18 @@ public class BookControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.header().exists("BookId"));
     }
+
+    @Test
+    public void testUpdateBook() throws Exception {
+
+        mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .patch("/books/1?description=TestAmacliDescription")
+                                .header(
+                                        HttpHeaders.AUTHORIZATION,
+                                        "Bearer " + authService.login(new AuthInDTO("admin@mybookshelf", "P4ssw0rd"))
+                                )
+                )
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
 }
