@@ -12,9 +12,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.InputStream;
 import java.util.List;
 
 @Service
@@ -28,14 +27,14 @@ public class DemoDataService implements CommandLineRunner {
     @Override
     public void run(String... args) {
 
-        File booksJsonFile;
+        InputStream booksJsonFile;
         List<Book> bookList;
         try {
-            booksJsonFile = new ClassPathResource("static/books.json").getFile();
+            booksJsonFile = new ClassPathResource("static/books.json").getInputStream();
             bookList =
                     new Gson().fromJson(
                             new String(
-                                    Files.readAllBytes(booksJsonFile.toPath())
+                                    booksJsonFile.readAllBytes()
                             ),
                             new TypeToken<List<Book>>() {
                             }.getType()
@@ -46,16 +45,14 @@ public class DemoDataService implements CommandLineRunner {
 
         bookRepository.saveAll(bookList);
 
-        File memberBooksJsonFile;
+        InputStream memberBooksJsonFile;
         List<MemberBook> memberBookList;
         try {
-            memberBooksJsonFile = new ClassPathResource("static/memberBooks.json").getFile();
+            memberBooksJsonFile = new ClassPathResource("static/memberBooks.json").getInputStream();
             memberBookList =
                     new Gson().fromJson(
                             new String(
-                                    Files.readAllBytes(
-                                            memberBooksJsonFile.toPath()
-                                    )
+                                    memberBooksJsonFile.readAllBytes()
                             ),
                             new TypeToken<List<MemberBook>>() {
                             }.getType()
