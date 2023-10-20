@@ -2,7 +2,7 @@ pipeline {
     stages {
         stage('build') {
             steps {
-                ./run.sh
+                sh ./run.sh
             }
         }
     }
