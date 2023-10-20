@@ -33,6 +33,7 @@ public class MyBookshelfApiApplication {
 		member.setLastName("Alioglu");
 		member.setRegistrationTime(Timestamp.valueOf(LocalDateTime.of(2023, Month.JANUARY, 1, 0, 0)));
 		member.setPassword(bCryptPasswordEncoder.encode("P4ssw0rd"));
+		
 		memberRepository.save(member);
 
 		authorityRepository.saveAll(
