@@ -1,37 +1,40 @@
 services:
   app:
-    build:
-      context: .
+    image: my-bookshelf-api
+    networks:
+      - my-bookshelf-api-network
     ports:
       - 8080:8080
     depends_on:
-      my-bookshelf-api-db:
+      db:
         condition: service_healthy
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://my-bookshelf-api-db:3306/bookshelf
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/bookshelf
       - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=Th3P4ssw0rd
+      - SPRING_DATASOURCE_PASSWORD=kdiKRc7xxSNSQf73xjZU
+  db:
+    image: mysql:8.0
     networks:
       - my-bookshelf-api-network
-  my-bookshelf-api-db:
-    image: mysql:8.0
     ports:
       - 3306:3306
     environment:
       - MYSQL_DATABASE=bookshelf
-      - MYSQL_ROOT_PASSWORD=Th3P4ssw0rd
+      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/db-password
     volumes:
       - mysql-data:/var/lib/mysql
       - ./db_init.sql:/docker-entrypoint-initdb.d/db_init.sql
-    networks:
-      - my-bookshelf-api-network
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 5s
       retries: 10
+    secrets:
+      - db-password
 networks:
   my-bookshelf-api-network:
-    external: true
 volumes:
   mysql-data:
   mysql-dump:
+secrets:
+  db-password:
+    file: docker-secrets/db-password.txt
