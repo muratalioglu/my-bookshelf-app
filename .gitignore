@@ -28,6 +28,9 @@ target/
 **/src/main/**/target/
 **/src/test/**/target/
 
+src/main/resources/certs/
+docker-secrets/
+
 ### STS ###
 .apt_generated
 .classpath
