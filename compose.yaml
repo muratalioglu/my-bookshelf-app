@@ -11,7 +11,7 @@ services:
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/bookshelf
       - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=kdiKRc7xxSNSQf73xjZU
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
   db:
     image: mysql:8.0
     networks:
@@ -20,7 +20,7 @@ services:
       - 3306:3306
     environment:
       - MYSQL_DATABASE=bookshelf
-      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/db-password
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
     volumes:
       - mysql-data:/var/lib/mysql
       - ./db_init.sql:/docker-entrypoint-initdb.d/db_init.sql
@@ -28,13 +28,8 @@ services:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 5s
       retries: 10
-    secrets:
-      - db-password
 networks:
   my-bookshelf-api-network:
 volumes:
   mysql-data:
   mysql-dump:
-secrets:
-  db-password:
-    file: docker-secrets/db-password.txt

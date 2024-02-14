@@ -29,7 +29,7 @@ target/
 **/src/test/**/target/
 
 src/main/resources/certs/
-docker-secrets/
+.env
 
 ### STS ###
 .apt_generated
