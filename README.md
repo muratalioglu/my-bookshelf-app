@@ -1,4 +1,4 @@
 ```shell
-cd my-bookshelf-api
+cd my-bookshelf-app
 ./run.sh
 ```

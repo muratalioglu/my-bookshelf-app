@@ -1,8 +1,8 @@
 services:
   app:
-    image: my-bookshelf-api
+    image: my-bookshelf-app
     networks:
-      - my-bookshelf-api-network
+      - my-bookshelf-app-network
     ports:
       - 8080:8080
     depends_on:
@@ -15,7 +15,7 @@ services:
   db:
     image: mysql:8.0
     networks:
-      - my-bookshelf-api-network
+      - my-bookshelf-app-network
     ports:
       - 3306:3306
     environment:
@@ -29,7 +29,7 @@ services:
       timeout: 5s
       retries: 10
 networks:
-  my-bookshelf-api-network:
+  my-bookshelf-app-network:
 volumes:
   mysql-data:
   mysql-dump:
