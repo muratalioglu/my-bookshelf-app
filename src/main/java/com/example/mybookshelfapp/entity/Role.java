@@ -3,7 +3,6 @@ package com.example.mybookshelfapp.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 
@@ -11,7 +10,7 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Authority implements GrantedAuthority {
+public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,10 +21,10 @@ public class Authority implements GrantedAuthority {
     Integer memberId;
 
     @Column
-    String authority;
+    String role;
 
-    public Authority(Integer memberId, String authority) {
+    public Role(Integer memberId, String role) {
         this.memberId = memberId;
-        this.authority = authority;
+        this.role = role;
     }
 }

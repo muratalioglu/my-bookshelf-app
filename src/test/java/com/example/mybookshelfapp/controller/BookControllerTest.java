@@ -2,11 +2,11 @@ package com.example.mybookshelfapp.controller;
 
 import com.example.mybookshelfapp.dto.AuthInDTO;
 import com.example.mybookshelfapp.dto.BookInDTO;
-import com.example.mybookshelfapp.entity.Authority;
+import com.example.mybookshelfapp.entity.Role;
 import com.example.mybookshelfapp.entity.Member;
 import com.example.mybookshelfapp.repository.MemberRepository;
 import com.example.mybookshelfapp.service.AuthService;
-import com.example.mybookshelfapp.service.AuthorityRepository;
+import com.example.mybookshelfapp.service.RoleRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ public class BookControllerTest {
 
     private final AuthService authService;
 
-    private final AuthorityRepository authorityRepository;
+    private final RoleRepository roleRepository;
     private final MemberRepository memberRepository;
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -40,13 +40,13 @@ public class BookControllerTest {
 
     @Autowired
     public BookControllerTest(AuthService authService,
-                              AuthorityRepository authorityRepository,
+                              RoleRepository roleRepository,
                               MemberRepository memberRepository,
                               BCryptPasswordEncoder bCryptPasswordEncoder,
                               MockMvc mockMvc) {
 
         this.authService = authService;
-        this.authorityRepository = authorityRepository;
+        this.roleRepository = roleRepository;
         this.memberRepository = memberRepository;
         this.mockMvc = mockMvc;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -62,10 +62,10 @@ public class BookControllerTest {
         member.setPassword(bCryptPasswordEncoder.encode("P4ssw0rd"));
         memberRepository.save(member);
 
-        authorityRepository.saveAll(
+        roleRepository.saveAll(
                 Set.of(
-                        new Authority(member.getId(), "user"),
-                        new Authority(member.getId(), "editor")
+                        new Role(member.getId(), "user"),
+                        new Role(member.getId(), "editor")
                 )
         );
     }

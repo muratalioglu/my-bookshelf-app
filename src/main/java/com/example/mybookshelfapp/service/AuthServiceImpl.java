@@ -2,7 +2,7 @@ package com.example.mybookshelfapp.service;
 
 import com.example.mybookshelfapp.dto.AuthInDTO;
 import com.example.mybookshelfapp.dto.RegisterInDTO;
-import com.example.mybookshelfapp.entity.Authority;
+import com.example.mybookshelfapp.entity.Role;
 import com.example.mybookshelfapp.entity.Member;
 import com.example.mybookshelfapp.repository.MemberRepository;
 import org.springframework.http.HttpStatus;
@@ -25,20 +25,20 @@ public class AuthServiceImpl implements AuthService {
     final BCryptPasswordEncoder bCryptPasswordEncoder;
     final JwtEncoder jwtEncoder;
 
-    final AuthorityRepository authorityRepository;
+    final RoleRepository roleRepository;
     final MemberRepository memberRepository;
 
     final MemberService memberService;
 
     public AuthServiceImpl(BCryptPasswordEncoder bCryptPasswordEncoder,
                            JwtEncoder jwtEncoder,
-                           AuthorityRepository authorityRepository,
+                           RoleRepository roleRepository,
                            MemberRepository memberRepository,
                            MemberService memberService) {
 
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.jwtEncoder = jwtEncoder;
-        this.authorityRepository = authorityRepository;
+        this.roleRepository = roleRepository;
         this.memberRepository = memberRepository;
         this.memberService = memberService;
     }
@@ -60,11 +60,11 @@ public class AuthServiceImpl implements AuthService {
 
         memberRepository.save(member);
 
-        Authority authority = new Authority();
-        authority.setMemberId(member.getId());
-        authority.setAuthority("user");
+        Role role = new Role();
+        role.setMemberId(member.getId());
+        role.setRole("user");
 
-        authorityRepository.save(authority);
+        roleRepository.save(role);
 
         return member.getId();
     }
@@ -95,8 +95,8 @@ public class AuthServiceImpl implements AuthService {
                 .issuedAt(now)
                 .expiresAt(now.plus(10, ChronoUnit.MINUTES))
                 .subject(member.getId().toString())
-                .claim("scope",
-                        member.getAuthorities().stream().map(Authority::getAuthority).collect(Collectors.toSet()))
+                .claim("roles",
+                        member.getRoles().stream().map(Role::getRole).collect(Collectors.toSet()))
                 .build();
 
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
