@@ -37,9 +37,9 @@ CREATE TABLE bookshelf.member_book (
     primary key(id)
 );
 
-CREATE TABLE bookshelf.authority (
+CREATE TABLE bookshelf.role (
     id INT AUTO_INCREMENT,
     member_id INT,
-    authority VARCHAR(255),
+    role VARCHAR(255),
     primary key(id)
 );
