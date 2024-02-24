@@ -3,7 +3,6 @@ package com.example.mybookshelfapp.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -36,5 +35,5 @@ public class Member  {
 
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "member_id")
-    Set<Role> roles;
+    Set<MemberRole> roles;
 }

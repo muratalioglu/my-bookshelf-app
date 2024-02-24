@@ -2,11 +2,12 @@ package com.example.mybookshelfapp.controller;
 
 import com.example.mybookshelfapp.dto.AuthInDTO;
 import com.example.mybookshelfapp.dto.BookInDTO;
-import com.example.mybookshelfapp.entity.Role;
 import com.example.mybookshelfapp.entity.Member;
+import com.example.mybookshelfapp.entity.MemberRole;
+import com.example.mybookshelfapp.enums.RoleType;
 import com.example.mybookshelfapp.repository.MemberRepository;
 import com.example.mybookshelfapp.service.AuthService;
-import com.example.mybookshelfapp.service.RoleRepository;
+import com.example.mybookshelfapp.service.MemberRoleRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,7 @@ public class BookControllerTest {
 
     private final AuthService authService;
 
-    private final RoleRepository roleRepository;
+    private final MemberRoleRepository roleRepository;
     private final MemberRepository memberRepository;
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -40,13 +41,13 @@ public class BookControllerTest {
 
     @Autowired
     public BookControllerTest(AuthService authService,
-                              RoleRepository roleRepository,
+                              MemberRoleRepository memberRoleRepository,
                               MemberRepository memberRepository,
                               BCryptPasswordEncoder bCryptPasswordEncoder,
                               MockMvc mockMvc) {
 
         this.authService = authService;
-        this.roleRepository = roleRepository;
+        this.roleRepository = memberRoleRepository;
         this.memberRepository = memberRepository;
         this.mockMvc = mockMvc;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -64,8 +65,8 @@ public class BookControllerTest {
 
         roleRepository.saveAll(
                 Set.of(
-                        new Role(member.getId(), "user"),
-                        new Role(member.getId(), "editor")
+                        new MemberRole(member.getId(), RoleType.USER.getValue()),
+                        new MemberRole(member.getId(), RoleType.EDITOR.getValue())
                 )
         );
     }

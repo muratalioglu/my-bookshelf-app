@@ -2,8 +2,9 @@ package com.example.mybookshelfapp.service;
 
 import com.example.mybookshelfapp.dto.AuthInDTO;
 import com.example.mybookshelfapp.dto.RegisterInDTO;
-import com.example.mybookshelfapp.entity.Role;
 import com.example.mybookshelfapp.entity.Member;
+import com.example.mybookshelfapp.entity.MemberRole;
+import com.example.mybookshelfapp.enums.RoleType;
 import com.example.mybookshelfapp.repository.MemberRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,20 +26,20 @@ public class AuthServiceImpl implements AuthService {
     final BCryptPasswordEncoder bCryptPasswordEncoder;
     final JwtEncoder jwtEncoder;
 
-    final RoleRepository roleRepository;
+    final MemberRoleRepository memberRoleRepository;
     final MemberRepository memberRepository;
 
     final MemberService memberService;
 
     public AuthServiceImpl(BCryptPasswordEncoder bCryptPasswordEncoder,
                            JwtEncoder jwtEncoder,
-                           RoleRepository roleRepository,
+                           MemberRoleRepository roleRepository,
                            MemberRepository memberRepository,
                            MemberService memberService) {
 
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.jwtEncoder = jwtEncoder;
-        this.roleRepository = roleRepository;
+        this.memberRoleRepository = roleRepository;
         this.memberRepository = memberRepository;
         this.memberService = memberService;
     }
@@ -60,11 +61,11 @@ public class AuthServiceImpl implements AuthService {
 
         memberRepository.save(member);
 
-        Role role = new Role();
+        MemberRole role = new MemberRole();
         role.setMemberId(member.getId());
-        role.setRole("user");
+        role.setRoleId(RoleType.USER.getValue());
 
-        roleRepository.save(role);
+        memberRoleRepository.save(role);
 
         return member.getId();
     }
@@ -96,7 +97,9 @@ public class AuthServiceImpl implements AuthService {
                 .expiresAt(now.plus(10, ChronoUnit.MINUTES))
                 .subject(member.getId().toString())
                 .claim("roles",
-                        member.getRoles().stream().map(Role::getRole).collect(Collectors.toSet()))
+                        member.getRoles().stream()
+                                .map(memberRole -> RoleType.fromValue(memberRole.getRoleId()))
+                                .collect(Collectors.toSet()))
                 .build();
 
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();

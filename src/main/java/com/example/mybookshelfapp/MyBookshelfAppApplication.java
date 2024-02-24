@@ -1,10 +1,11 @@
 package com.example.mybookshelfapp;
 
 import com.example.mybookshelfapp.config.RsaKeyProperties;
-import com.example.mybookshelfapp.entity.Role;
+import com.example.mybookshelfapp.entity.MemberRole;
 import com.example.mybookshelfapp.entity.Member;
+import com.example.mybookshelfapp.enums.RoleType;
 import com.example.mybookshelfapp.repository.MemberRepository;
-import com.example.mybookshelfapp.service.RoleRepository;
+import com.example.mybookshelfapp.service.MemberRoleRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -23,7 +24,7 @@ public class MyBookshelfAppApplication {
 	public static void main(String[] args) {
 		ConfigurableApplicationContext context = SpringApplication.run(MyBookshelfAppApplication.class, args);
 
-		RoleRepository roleRepository = context.getBean(RoleRepository.class);
+		MemberRoleRepository roleRepository = context.getBean(MemberRoleRepository.class);
 		MemberRepository memberRepository = context.getBean(MemberRepository.class);
 		BCryptPasswordEncoder bCryptPasswordEncoder = context.getBean(BCryptPasswordEncoder.class);
 
@@ -37,8 +38,7 @@ public class MyBookshelfAppApplication {
 
 		roleRepository.saveAll(
 				Set.of(
-						new Role(member.getId(), "user"),
-						new Role(member.getId(), "editor")
+						new MemberRole(member.getId(), RoleType.ADMIN.getValue())
 				)
 		);
 	}
