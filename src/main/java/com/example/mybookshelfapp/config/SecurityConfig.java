@@ -36,12 +36,12 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests(auth -> auth
-                        .antMatchers("/h2-console/**").permitAll()
                         .antMatchers("/auth/**").permitAll()
-                        .antMatchers(HttpMethod.POST, "/books/**").hasAuthority("SCOPE_editor")
-                        .antMatchers(HttpMethod.PATCH, "/books/**").hasAuthority("SCOPE_editor")
-                        .antMatchers(HttpMethod.PATCH, "/member-books/**").permitAll()
-                        .antMatchers("/books/**").hasAuthority("SCOPE_user")
+                        .antMatchers(HttpMethod.POST, "/books/**").hasAnyAuthority("SCOPE_admin", "SCOPE_editor")
+                        .antMatchers(HttpMethod.PATCH, "/books/**").hasAnyAuthority("SCOPE_admin", "SCOPE_editor")
+                        .antMatchers(HttpMethod.DELETE, "/books/**").hasAnyAuthority("SCOPE_admin", "SCOPE_editor")
+                        .antMatchers(HttpMethod.GET, "/member-books/**").hasAnyAuthority("SCOPE_admin", "SCOPE_editor", "SCOPE_user")
+                        .antMatchers("/member-books/**").hasAuthority("SCOPE_user")
                         .anyRequest().authenticated())
                 .csrf(CsrfConfigurer::disable)
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
