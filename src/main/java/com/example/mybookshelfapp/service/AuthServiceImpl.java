@@ -6,6 +6,7 @@ import com.example.mybookshelfapp.entity.Member;
 import com.example.mybookshelfapp.entity.MemberRole;
 import com.example.mybookshelfapp.enums.RoleType;
 import com.example.mybookshelfapp.repository.MemberRepository;
+import com.example.mybookshelfapp.repository.MemberRoleRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;

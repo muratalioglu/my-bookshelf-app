@@ -5,7 +5,7 @@ import com.example.mybookshelfapp.entity.MemberRole;
 import com.example.mybookshelfapp.entity.Member;
 import com.example.mybookshelfapp.enums.RoleType;
 import com.example.mybookshelfapp.repository.MemberRepository;
-import com.example.mybookshelfapp.service.MemberRoleRepository;
+import com.example.mybookshelfapp.repository.MemberRoleRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

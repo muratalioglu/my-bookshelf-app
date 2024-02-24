@@ -7,7 +7,7 @@ import com.example.mybookshelfapp.entity.MemberRole;
 import com.example.mybookshelfapp.enums.RoleType;
 import com.example.mybookshelfapp.repository.MemberRepository;
 import com.example.mybookshelfapp.service.AuthService;
-import com.example.mybookshelfapp.service.MemberRoleRepository;
+import com.example.mybookshelfapp.repository.MemberRoleRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
