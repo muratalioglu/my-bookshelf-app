@@ -19,6 +19,7 @@ public class MemberBook {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
     Integer id;
 
     @Column
