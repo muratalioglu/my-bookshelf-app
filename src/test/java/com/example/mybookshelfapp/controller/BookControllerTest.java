@@ -6,11 +6,10 @@ import com.example.mybookshelfapp.entity.Member;
 import com.example.mybookshelfapp.entity.MemberRole;
 import com.example.mybookshelfapp.enums.RoleType;
 import com.example.mybookshelfapp.repository.MemberRepository;
-import com.example.mybookshelfapp.service.AuthService;
 import com.example.mybookshelfapp.repository.MemberRoleRepository;
+import com.example.mybookshelfapp.service.AuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,7 +23,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.Set;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -32,12 +30,14 @@ public class BookControllerTest {
 
     private final AuthService authService;
 
-    private final MemberRoleRepository roleRepository;
+    private final MemberRoleRepository memberRoleRepository;
     private final MemberRepository memberRepository;
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    private String accessToken;
 
     @Autowired
     public BookControllerTest(AuthService authService,
@@ -47,28 +47,29 @@ public class BookControllerTest {
                               MockMvc mockMvc) {
 
         this.authService = authService;
-        this.roleRepository = memberRoleRepository;
+        this.memberRoleRepository = memberRoleRepository;
         this.memberRepository = memberRepository;
         this.mockMvc = mockMvc;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    @BeforeEach
-    public void saveMockUser() {
-        Member member = new Member();
-        member.setEmail("admin@mybookshelf");
-        member.setFirstName("Murat Deniz");
-        member.setLastName("Alioglu");
-        member.setRegistrationTime(Timestamp.valueOf(LocalDateTime.of(2023, Month.JANUARY, 1, 0, 0)));
-        member.setPassword(bCryptPasswordEncoder.encode("P4ssw0rd"));
-        memberRepository.save(member);
+    private String getAccessToken() {
+        if (accessToken == null) {
 
-        roleRepository.saveAll(
-                Set.of(
-                        new MemberRole(member.getId(), RoleType.USER.getValue()),
-                        new MemberRole(member.getId(), RoleType.EDITOR.getValue())
-                )
-        );
+            Member member = new Member();
+            member.setEmail("admin@mybookshelf");
+            member.setFirstName("Murat Deniz");
+            member.setLastName("Alioglu");
+            member.setRegistrationTime(Timestamp.valueOf(LocalDateTime.of(2023, Month.JANUARY, 1, 0, 0)));
+            member.setPassword(bCryptPasswordEncoder.encode("P4ssw0rd"));
+            memberRepository.save(member);
+
+            MemberRole memberRole = new MemberRole(member.getId(), RoleType.ADMIN.getValue());;
+            memberRoleRepository.save(memberRole);
+
+            accessToken = "Bearer " + authService.login(new AuthInDTO("admin@mybookshelf", "P4ssw0rd"));
+        }
+        return accessToken;
     }
 
     @Test
@@ -79,8 +80,7 @@ public class BookControllerTest {
                                 .get("/books/" + 1)
                                 .header(
                                         HttpHeaders.AUTHORIZATION,
-                                        "Bearer " + authService.login(new AuthInDTO("admin@mybookshelf", "P4ssw0rd")
-                                        )
+                                        getAccessToken()
                                 )
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk());
@@ -90,8 +90,7 @@ public class BookControllerTest {
                                 .get("/books/" + Integer.MAX_VALUE)
                                 .header(
                                         HttpHeaders.AUTHORIZATION,
-                                        "Bearer " + authService.login(new AuthInDTO("admin@mybookshelf", "P4ssw0rd")
-                                        )
+                                        getAccessToken()
                                 )
                 )
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
@@ -117,7 +116,7 @@ public class BookControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .header(
                                 HttpHeaders.AUTHORIZATION,
-                                "Bearer " + authService.login(new AuthInDTO("admin@mybookshelf", "P4ssw0rd"))
+                                getAccessToken()
                         )
                 )
                 .andExpect(MockMvcResultMatchers.status().isCreated())
@@ -132,7 +131,7 @@ public class BookControllerTest {
                                 .patch("/books/1?description=TestAmacliDescription")
                                 .header(
                                         HttpHeaders.AUTHORIZATION,
-                                        "Bearer " + authService.login(new AuthInDTO("admin@mybookshelf", "P4ssw0rd"))
+                                        getAccessToken()
                                 )
                 )
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
@@ -146,7 +145,7 @@ public class BookControllerTest {
                                 .delete("/books/" + 1)
                                 .header(
                                         HttpHeaders.AUTHORIZATION,
-                                        "Bearer " + authService.login(new AuthInDTO("admin@mybookshelf", "P4ssw0rd"))
+                                        getAccessToken()
                                 )
                 )
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
