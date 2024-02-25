@@ -99,7 +99,7 @@ public class AuthServiceImpl implements AuthService {
                 .subject(member.getId().toString())
                 .claim("roles",
                         member.getRoles().stream()
-                                .map(memberRole -> RoleType.fromValue(memberRole.getRoleId()))
+                                .map(memberRole -> RoleType.fromValue(memberRole.getRoleId()).toString())
                                 .collect(Collectors.toSet()))
                 .build();
 
