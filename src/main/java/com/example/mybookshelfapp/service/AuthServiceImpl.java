@@ -34,13 +34,13 @@ public class AuthServiceImpl implements AuthService {
 
     public AuthServiceImpl(BCryptPasswordEncoder bCryptPasswordEncoder,
                            JwtEncoder jwtEncoder,
-                           MemberRoleRepository roleRepository,
+                           MemberRoleRepository memberRoleRepository,
                            MemberRepository memberRepository,
                            MemberService memberService) {
 
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.jwtEncoder = jwtEncoder;
-        this.memberRoleRepository = roleRepository;
+        this.memberRoleRepository = memberRoleRepository;
         this.memberRepository = memberRepository;
         this.memberService = memberService;
     }
