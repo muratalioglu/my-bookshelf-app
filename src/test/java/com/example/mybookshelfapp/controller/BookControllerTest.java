@@ -64,7 +64,7 @@ public class BookControllerTest {
             member.setPassword(bCryptPasswordEncoder.encode("P4ssw0rd"));
             memberRepository.save(member);
 
-            MemberRole memberRole = new MemberRole(member.getId(), RoleType.ADMIN.getValue());;
+            MemberRole memberRole = new MemberRole(member.getId(), RoleType.ADMIN.getValue());
             memberRoleRepository.save(memberRole);
 
             accessToken = "Bearer " + authService.login(new AuthInDTO("admin@mybookshelf", "P4ssw0rd"));

@@ -97,7 +97,7 @@ public class AuthServiceImpl implements AuthService {
                 .issuedAt(now)
                 .expiresAt(now.plus(10, ChronoUnit.MINUTES))
                 .subject(member.getId().toString())
-                .claim("roles",
+                .claim("scope",
                         member.getRoles().stream()
                                 .map(memberRole -> RoleType.fromValue(memberRole.getRoleId()).toString())
                                 .collect(Collectors.toSet()))
