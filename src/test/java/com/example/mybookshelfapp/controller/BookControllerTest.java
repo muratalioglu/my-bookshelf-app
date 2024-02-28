@@ -37,7 +37,7 @@ public class BookControllerTest {
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private String accessToken;
+    private static String accessToken;
 
     @Autowired
     public BookControllerTest(AuthService authService,
