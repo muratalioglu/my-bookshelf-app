@@ -5,8 +5,6 @@ import com.example.mybookshelfapp.dto.MemberBookInDTO;
 import com.example.mybookshelfapp.service.MemberBookService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +12,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.security.Principal;
-import java.util.Collection;
 
 @RestController
 @RequestMapping("/member-books")
@@ -28,14 +25,7 @@ public class MemberBookController {
     }
 
     @GetMapping("/{memberId}")
-    public ResponseEntity<MemberBookDTO> getMemberBooks(Principal principal,
-                                                        @PathVariable @Positive Integer memberId) {
-
-        JwtAuthenticationToken jwtToken = (JwtAuthenticationToken) principal;
-        Collection<GrantedAuthority> authorities = jwtToken.getAuthorities();
-
-        if (authorities.stream().noneMatch(authority -> authority.getAuthority().endsWith("editor")))
-            memberId = Integer.parseInt(principal.getName());
+    public ResponseEntity<MemberBookDTO> getMemberBooks(@PathVariable @Positive Integer memberId) {
 
         MemberBookDTO memberBookDTO = memberBookService.getMemberBooks(memberId);
         if (memberBookDTO == null)
@@ -50,12 +40,6 @@ public class MemberBookController {
     public ResponseEntity<Void> addBookToMember(Principal principal,
                                                 @RequestBody MemberBookInDTO dto,
                                                 @PathVariable @Positive Integer memberId) {
-
-        JwtAuthenticationToken jwtToken = (JwtAuthenticationToken) principal;
-        Collection<GrantedAuthority> authorities = jwtToken.getAuthorities();
-
-        if (authorities.stream().noneMatch(authority -> authority.getAuthority().endsWith("editor")))
-            memberId = Integer.parseInt(principal.getName());
 
         memberBookService.addBookToMember(dto, memberId);
 
@@ -83,12 +67,6 @@ public class MemberBookController {
     public ResponseEntity<Void> removeBookFromMember(Principal principal,
                                                      @PathVariable @Positive Integer memberId,
                                                      @PathVariable @Positive Integer bookId) {
-
-        JwtAuthenticationToken jwtToken = (JwtAuthenticationToken) principal;
-        Collection<GrantedAuthority> authorities = jwtToken.getAuthorities();
-
-        if (authorities.stream().noneMatch(authority -> authority.getAuthority().endsWith("editor")))
-            memberId = Integer.parseInt(principal.getName());
 
         memberBookService.removeBookFromMember(bookId, memberId);
 
