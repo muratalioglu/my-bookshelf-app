@@ -84,7 +84,7 @@ public class MemberBookServiceImpl implements MemberBookService {
         if (memberBookRepository.existsByBookIdAndMemberIdAndDeletedFalse(dto.getBookId(), memberId))
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
-                    String.format("The book with id [%d] is already on the member's shelf.", dto.getBookId())
+                    String.format("The book with id [%d] is already on the member's list.", dto.getBookId())
             );
 
         MemberBook memberBook = new MemberBook();
