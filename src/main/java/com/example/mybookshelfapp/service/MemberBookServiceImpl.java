@@ -39,6 +39,8 @@ public class MemberBookServiceImpl implements MemberBookService {
     @Override
     public List<MemberBookDTO> getMemberBooks(Integer memberId) {
 
+        validateMemberExistence(memberId);
+
         List<MemberBook> memberBookList = memberBookRepository.findByMemberIdAndDeletedFalse(memberId);
         if (memberBookList.isEmpty())
             return null;
@@ -71,6 +73,8 @@ public class MemberBookServiceImpl implements MemberBookService {
     @Override
     public void addBookToMember(MemberBookInDTO dto, Integer memberId) {
 
+        validateMemberExistence(memberId);
+
         if (!bookRepository.existsById(dto.getBookId()))
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
@@ -101,6 +105,8 @@ public class MemberBookServiceImpl implements MemberBookService {
     @Override
     public void removeBookFromMember(Integer bookId, Integer memberId) {
 
+        validateMemberExistence(memberId);
+
         Optional<MemberBook> memberBookOptional = memberBookRepository.findByMemberIdAndBookIdAndDeletedFalse(memberId, bookId);
 
         memberBookOptional.ifPresentOrElse(
@@ -124,6 +130,7 @@ public class MemberBookServiceImpl implements MemberBookService {
         if (status == null && currentPage == null)
             return;
 
+        validateMemberExistence(memberId);
 
         Optional<MemberBook> memberBookOptional = memberBookRepository.findByMemberIdAndBookId(memberId, bookId);
         if (memberBookOptional.isEmpty())
