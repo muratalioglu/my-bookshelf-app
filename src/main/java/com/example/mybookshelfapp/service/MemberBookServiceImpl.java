@@ -119,12 +119,13 @@ public class MemberBookServiceImpl implements MemberBookService {
     }
 
     @Override
-    public void updateMemberBook(Integer id, String status, Integer currentPage) {
+    public void updateMemberBook(Integer memberId, Integer bookId, String status, Integer currentPage) {
 
         if (status == null && currentPage == null)
             return;
 
-        Optional<MemberBook> memberBookOptional = memberBookRepository.findById(id);
+
+        Optional<MemberBook> memberBookOptional = memberBookRepository.findByMemberIdAndBookId(memberId, bookId);
         if (memberBookOptional.isEmpty())
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,

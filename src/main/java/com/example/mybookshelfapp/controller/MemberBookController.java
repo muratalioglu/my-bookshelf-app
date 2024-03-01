@@ -49,14 +49,16 @@ public class MemberBookController {
                 .build();
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/{memberId}/{bookId}")
     public ResponseEntity<Void> updateMemberBook(Principal principal,
-                                                 @PathVariable @Positive Integer id,
+                                                 @PathVariable @Positive Integer memberId,
+                                                 @PathVariable @Positive Integer bookId,
                                                  @RequestParam(required = false) @Size(max = 20) String status,
                                                  @RequestParam(required = false) @Min(0) @Positive Integer currentPage) {
 
         memberBookService.updateMemberBook(
-                id,
+                memberId,
+                bookId,
                 status,
                 currentPage
         );

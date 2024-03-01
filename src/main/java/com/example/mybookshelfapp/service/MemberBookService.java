@@ -13,5 +13,5 @@ public interface MemberBookService {
 
     void removeBookFromMember(Integer bookId, Integer memberId);
 
-    void updateMemberBook(Integer memberBookId, String status, Integer currentPage);
+    void updateMemberBook(Integer memberId, Integer bookId, String status, Integer currentPage);
 }

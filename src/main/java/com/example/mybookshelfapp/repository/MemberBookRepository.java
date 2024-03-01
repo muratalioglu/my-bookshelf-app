@@ -13,4 +13,6 @@ public interface MemberBookRepository extends JpaRepository<MemberBook, Integer>
     boolean existsByBookIdAndMemberIdAndDeletedFalse(Integer bookId, Integer memberId);
 
     Optional<MemberBook> findByMemberIdAndBookIdAndDeletedFalse(Integer memberId, Integer bookId);
+
+    Optional<MemberBook> findByMemberIdAndBookId(Integer memberId, Integer bookId);
 }
