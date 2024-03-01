@@ -37,7 +37,7 @@ public class MemberBookServiceImpl implements MemberBookService {
     }
 
     @Override
-    public MemberBookDTO getMemberBooks(Integer memberId) {
+    public List<MemberBookDTO> getMemberBooks(Integer memberId) {
 
         List<MemberBook> memberBookList = memberBookRepository.findByMemberIdAndDeletedFalse(memberId);
         if (memberBookList.isEmpty())
@@ -56,18 +56,16 @@ public class MemberBookServiceImpl implements MemberBookService {
                                 )
                         );
 
-        return new MemberBookDTO(
-                memberId,
-                memberBookList.stream()
-                        .map(memberBook ->
-                                new MemberBookDTO.Book(
-                                        memberBook.getBookId(),
-                                        bookMap.get(memberBook.getBookId()).getTitle(),
-                                        memberBook.getStatus(),
-                                        memberBook.getCurrentPage()
-                                )
+        return memberBookList.stream()
+                .map(memberBook ->
+                        new MemberBookDTO(
+                                memberBook.getBookId(),
+                                bookMap.get(memberBook.getBookId()).getTitle(),
+                                memberBook.getStatus(),
+                                memberBook.getCurrentPage()
                         )
-                        .collect(Collectors.toList()));
+                )
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -12,6 +12,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/member-books")
@@ -25,15 +26,15 @@ public class MemberBookController {
     }
 
     @GetMapping("/{memberId}")
-    public ResponseEntity<MemberBookDTO> getMemberBooks(@PathVariable @Positive Integer memberId) {
+    public ResponseEntity<List<MemberBookDTO>> getMemberBooks(@PathVariable @Positive Integer memberId) {
 
-        MemberBookDTO memberBookDTO = memberBookService.getMemberBooks(memberId);
-        if (memberBookDTO == null)
+        List<MemberBookDTO> memberBookDtoList = memberBookService.getMemberBooks(memberId);
+        if (memberBookDtoList == null || memberBookDtoList.isEmpty())
             return ResponseEntity.noContent().build();
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(memberBookDTO);
+                .body(memberBookDtoList);
     }
 
     @PostMapping("/{memberId}")
