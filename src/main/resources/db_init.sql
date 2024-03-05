@@ -43,3 +43,5 @@ CREATE TABLE bookshelf.member_role (
     role_id INT,
     primary key(id)
 );
+
+USE bookshelf;

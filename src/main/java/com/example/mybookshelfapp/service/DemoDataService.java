@@ -14,9 +14,12 @@ import com.google.gson.reflect.TypeToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
@@ -34,6 +37,14 @@ public class DemoDataService implements CommandLineRunner {
     final MemberRoleRepository memberRoleRepository;
 
     final BCryptPasswordEncoder bCryptPasswordEncoder;
+    final DataSource dataSource;
+
+    @PostConstruct
+    public void init() {
+        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+        populator.setScripts(new ClassPathResource("db_init.sql"));
+        populator.execute(dataSource);
+    }
 
     @Override
     public void run(String... args) {
@@ -82,6 +93,6 @@ public class DemoDataService implements CommandLineRunner {
         member.setPassword(bCryptPasswordEncoder.encode("P4ssw0rd"));
         memberRepository.save(member);
 
-        memberRoleRepository.save(new MemberRole(member.getId(), RoleType.ADMIN.getValue()));
+        memberRoleRepository.save(new MemberRole(member.getId(), RoleType.USER.getValue()));
     }
 }
