@@ -25,6 +25,7 @@ public class BookController {
     public ResponseEntity<List<BookDTO>> getBooks() {
 
         List<BookDTO> bookDTOList = bookService.getAllBooks();
+
         if (bookDTOList.isEmpty())
             return ResponseEntity.noContent().build();
 
@@ -34,7 +35,12 @@ public class BookController {
     @GetMapping("{id}")
     public ResponseEntity<BookDTO> getBook(@PathVariable Integer id) {
 
-        return ResponseEntity.ok(bookService.getBook(id));
+        BookDTO bookDTO = bookService.getBook(id);
+
+        if (bookDTO == null)
+            return ResponseEntity.noContent().build();
+
+        return ResponseEntity.ok(bookDTO);
     }
 
     @PostMapping
