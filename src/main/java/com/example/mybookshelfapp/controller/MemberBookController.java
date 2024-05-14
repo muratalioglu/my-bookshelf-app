@@ -15,7 +15,7 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/member-books")
+@RequestMapping("/members")
 @Validated
 public class MemberBookController {
 
@@ -25,7 +25,7 @@ public class MemberBookController {
         this.memberBookService = memberBookService;
     }
 
-    @GetMapping("/{memberId}")
+    @GetMapping("/{memberId}/books")
     public ResponseEntity<List<MemberBookDTO>> getMemberBooks(@PathVariable @Positive Integer memberId) {
 
         List<MemberBookDTO> memberBookDtoList = memberBookService.getMemberBooks(memberId);
@@ -37,7 +37,7 @@ public class MemberBookController {
                 .body(memberBookDtoList);
     }
 
-    @PostMapping("/{memberId}")
+    @PostMapping("/{memberId}/books")
     public ResponseEntity<Void> addBookToMember(Principal principal,
                                                 @RequestBody MemberBookInDTO dto,
                                                 @PathVariable @Positive Integer memberId) {
@@ -49,7 +49,7 @@ public class MemberBookController {
                 .build();
     }
 
-    @PatchMapping("/{memberId}/{bookId}")
+    @PatchMapping("/{memberId}/books/{bookId}")
     public ResponseEntity<Void> updateMemberBook(Principal principal,
                                                  @PathVariable @Positive Integer memberId,
                                                  @PathVariable @Positive Integer bookId,
@@ -66,7 +66,7 @@ public class MemberBookController {
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/{memberId}/{bookId}")
+    @DeleteMapping("/{memberId}/books/{bookId}")
     public ResponseEntity<Void> removeBookFromMember(Principal principal,
                                                      @PathVariable @Positive Integer memberId,
                                                      @PathVariable @Positive Integer bookId) {
