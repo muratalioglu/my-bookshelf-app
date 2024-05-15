@@ -18,7 +18,7 @@ VALUES
 
 INSERT INTO bookshelf.member_role
 VALUES
-    (NULL,1,1)
+    (NULL,1,3)
 ;
 
 USE bookshelf;
