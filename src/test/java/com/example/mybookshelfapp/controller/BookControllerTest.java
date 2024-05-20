@@ -9,17 +9,22 @@ import com.example.mybookshelfapp.repository.MemberRepository;
 import com.example.mybookshelfapp.repository.MemberRoleRepository;
 import com.example.mybookshelfapp.service.AuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.*;
+import org.aspectj.lang.annotation.Before;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.context.event.annotation.BeforeTestClass;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import javax.annotation.PostConstruct;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -53,23 +58,24 @@ public class BookControllerTest {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    private String getAccessToken() {
-        if (accessToken == null) {
+    @BeforeEach
+    public void createAccessToken() {
 
-            Member member = new Member();
-            member.setEmail("admin@mybookshelf");
-            member.setFirstName("Murat Deniz");
-            member.setLastName("Alioglu");
-            member.setRegistrationTime(Timestamp.valueOf(LocalDateTime.of(2023, Month.JANUARY, 1, 0, 0)));
-            member.setPassword(bCryptPasswordEncoder.encode("P4ssw0rd"));
-            memberRepository.save(member);
+        if (accessToken != null)
+            return;
 
-            MemberRole memberRole = new MemberRole(member.getId(), RoleType.ADMIN.getValue());
-            memberRoleRepository.save(memberRole);
+        Member member = new Member();
+        member.setEmail("admin@mybookshelf");
+        member.setFirstName("Murat Deniz");
+        member.setLastName("Alioglu");
+        member.setRegistrationTime(Timestamp.valueOf(LocalDateTime.of(2023, Month.JANUARY, 1, 0, 0)));
+        member.setPassword(bCryptPasswordEncoder.encode("P4ssw0rd"));
+        memberRepository.save(member);
 
-            accessToken = "Bearer " + authService.login(new AuthInDTO("admin@mybookshelf", "P4ssw0rd"));
-        }
-        return accessToken;
+        MemberRole memberRole = new MemberRole(member.getId(), RoleType.ADMIN.getValue());
+        memberRoleRepository.save(memberRole);
+
+        accessToken = "Bearer " + authService.login(new AuthInDTO("admin@mybookshelf", "P4ssw0rd"));
     }
 
     @Test
@@ -80,7 +86,7 @@ public class BookControllerTest {
                                 .get("/books/" + 1)
                                 .header(
                                         HttpHeaders.AUTHORIZATION,
-                                        getAccessToken()
+                                        accessToken
                                 )
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk());
@@ -90,7 +96,7 @@ public class BookControllerTest {
                                 .get("/books/" + Integer.MAX_VALUE)
                                 .header(
                                         HttpHeaders.AUTHORIZATION,
-                                        getAccessToken()
+                                        accessToken
                                 )
                 )
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
@@ -116,7 +122,7 @@ public class BookControllerTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .header(
                                 HttpHeaders.AUTHORIZATION,
-                                getAccessToken()
+                                accessToken
                         )
                 )
                 .andExpect(MockMvcResultMatchers.status().isCreated())
@@ -131,7 +137,7 @@ public class BookControllerTest {
                                 .patch("/books/1?description=TestAmacliDescription")
                                 .header(
                                         HttpHeaders.AUTHORIZATION,
-                                        getAccessToken()
+                                        accessToken
                                 )
                 )
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
@@ -145,7 +151,7 @@ public class BookControllerTest {
                                 .delete("/books/" + 1)
                                 .header(
                                         HttpHeaders.AUTHORIZATION,
-                                        getAccessToken()
+                                        accessToken
                                 )
                 )
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
